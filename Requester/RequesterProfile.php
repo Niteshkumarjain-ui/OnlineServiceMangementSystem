@@ -1,33 +1,54 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile</title>
+<?php
+define('TITLE', 'Requester Profile');
+define('PAGE', 'RequesterProfile');
+include('includes/header.php'); 
+include('../dbConnection.php');
+ session_start();
+ if($_SESSION['is_login']){
+  $rEmail = $_SESSION['rEmail'];
+ } else {
+  echo "<script> location.href='RequesterLogin.php'; </script>";
+ }
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+ $sql = "SELECT * FROM requesterlogin_tb WHERE r_email='$rEmail'";
+ $result = $conn->query($sql);
+ if($result->num_rows == 1){
+ $row = $result->fetch_assoc();
+ $rName = $row["r_name"]; }
 
-     <link rel="stylesheet" href="css/all.min.css">
-
-     <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-   <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300&display=swap" rel="stylesheet">
-     
-   <link rel="stylesheet" href="css/custom.css">
-</head>
-<body>
-    
-
-
-
-
-
-
-<!-- Javascript  -->
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-<script src="js/all.min.js"></script>
-</body>
-</html>
+ if(isset($_REQUEST['nameupdate'])){
+  if(($_REQUEST['rName'] == "")){
+   // msg displayed if required field missing
+   $passmsg = '<div class="alert alert-warning col-sm-6 ml-5 mt-2" role="alert"> Fill All Fileds </div>';
+  } else {
+   $rName = $_REQUEST["rName"];
+   $sql = "UPDATE requesterlogin_tb SET r_name = '$rName' WHERE r_email = '$rEmail'";
+   if($conn->query($sql) == TRUE){
+   // below msg display on form submit success
+   $passmsg = '<div class="alert alert-success col-sm-6 ml-5 mt-2" role="alert"> Updated Successfully </div>';
+   } else {
+   // below msg display on form submit failed
+   $passmsg = '<div class="alert alert-danger col-sm-6 ml-5 mt-2" role="alert"> Unable to Update </div>';
+      }
+    }
+   }
+?>
+<div class="col-sm-6 mt-5">
+  <form class="mx-5" method="POST">
+    <div class="form-group">
+      <label for="inputEmail">Email</label>
+      <input type="email" class="form-control" id="inputEmail" value=" <?php echo $rEmail ?>" readonly>
+    </div>
+    <div class="form-group">
+      <label for="inputName">Name</label>
+      <input type="text" class="form-control" id="inputName" name="rName" value=" <?php echo $rName ?>">
+    </div>
+    <button type="submit" class="btn btn-danger" name="nameupdate">Update</button>
+    <?php if(isset($passmsg)) {echo $passmsg; } ?>
+  </form>
+</div>
+</div>
+</div>
+<?php
+include('includes/footer.php'); 
+?>

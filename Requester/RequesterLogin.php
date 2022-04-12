@@ -1,5 +1,5 @@
 <?php
-include('../db_connection.php');
+include('../dbConnection.php');
 session_start();
 if(!isset($_SESSION['is_login'])){
   if(isset($_REQUEST['rEmail'])){
@@ -11,17 +11,18 @@ if(!isset($_SESSION['is_login'])){
       
       $_SESSION['is_login'] = true;
       $_SESSION['rEmail'] = $rEmail;
+      // Redirecting to RequesterProfile page on Correct Email and Pass
       echo "<script> location.href='RequesterProfile.php'; </script>";
       exit;
     } else {
       $msg = '<div class="alert alert-warning mt-2" role="alert"> Enter Valid Email and Password </div>';
     }
   }
-} 
-else {
+} else {
   echo "<script> location.href='RequesterProfile.php'; </script>";
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
